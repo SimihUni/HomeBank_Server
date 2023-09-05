@@ -4,7 +4,9 @@
   "description": "Server side of a home bank for kids.",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "tsc -p . && node ./dist/server.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc -p ."
   },
   "repository": {
     "type": "git",
@@ -20,6 +22,13 @@
   },
   "homepage": "https://github.com/SimihUni/HomeBank_Server#readme",
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.5.0",
+    "@types/pg": "^8.10.2",
+    "typescript": "^5.1.6"
   }
 }
