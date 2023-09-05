@@ -13,7 +13,7 @@ users.get('/all', async (req,res) => {
 });
 
 users.get('/',async (req,res) => {
-    console.log(`GET: ${host}/user/user`);
+    console.log(`GET: ${host}/user/`);
     if(req.query.email == undefined) {
         res.status(400).send('Bad request.');
     }
@@ -36,10 +36,9 @@ users.patch('/username', async (req,res) => {
     res.status(501).send('Not implemented yet.');
 });
 
-//admin access??
-users.post('/register', async (req,res) => {
-    console.log(`POST: ${host}/user/register`);
-    //TODO create user
+users.get('/balance', async (req,res) => {
+    console.log(`GET: ${host}/user/balance`);
+    //TODO get balance of an account or user
     res.status(501).send('Not implemented yet.');
 });
 
