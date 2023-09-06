@@ -55,3 +55,19 @@ export const getClient = async () => {
   };
   return client;
 };
+
+
+export async function standartQuery(text: string, values?: any[]) {
+  const client = await getClient();
+  try {
+    const query_res = await client.query(text, values);
+    console.log(`Result from query:${text}\nwith values:${values}`);
+    query_res.rows.map((row) => console.log(row));
+    client.release();
+    return query_res;
+  } catch (error) {
+    console.error("Error while trying to query! Error:", error);
+    client.release();
+    throw error;
+  }
+}

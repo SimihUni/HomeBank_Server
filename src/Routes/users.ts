@@ -1,6 +1,7 @@
 import express from "express";
 import { host } from "../enviroments";
 import { getAllUsers, getUser } from "../database/userDB";
+import { getAccountBYbeneficiary } from "../database/account";
 
 const users = express.Router();
 
@@ -44,8 +45,8 @@ users.get('/balance', async (req,res) => {
 
 users.get('/account', async (req,res) => {
     console.log(`GET: ${host}/user/account`);
-    //TODO get with user email
-    res.status(501).send('Not implemented yet.');
+    const all_users = await getAccountBYbeneficiary(req.body.beneficiary as string);
+    res.status(200).send(all_users.rows);
 });
 
 users.post('/account', async (req,res) => {
