@@ -1,12 +1,13 @@
 import express from "express";
 import { host } from "../enviroments";
+import { checkPassword } from "../database/userDB";
 
 const authN = express.Router();
 
 authN.post('/login',async (req,res) => {
     console.log(`POST: ${host}/auth/login`);
-    //TODO post credentials for refresh and auth token
-    res.status(501).send('Not implemented yet.');
+    const result = await checkPassword(req.body.email,req.body.password);
+    res.status(200).send(result)
 });
 
 authN.post('/refresh',async (req,res) => {

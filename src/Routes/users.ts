@@ -1,6 +1,6 @@
 import express from "express";
 import { host } from "../enviroments";
-import { getAllUsers, getUser } from "../database/userDB";
+import { deleteUser, getAllUsers, getUser } from "../database/userDB";
 import { getAccountBYbeneficiary } from "../database/account";
 
 const users = express.Router();
@@ -24,8 +24,8 @@ users.get('/',async (req,res) => {
 
 users.delete('/', async (req,res) => {
     console.log(`DELETE: ${host}/user/`);
-    //TODO
-    res.status(501).send('Not implemented yet.');
+    const user = await deleteUser(req.query.email as string);
+    res.status(200).send(user.rows);
 });
 
 users.patch('/username', async (req,res) => {
