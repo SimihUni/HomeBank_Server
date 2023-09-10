@@ -9,7 +9,15 @@ export async function getAccountBYbeneficiary(beneficiary: string) {
 
 export async function createAccount(beneficiary: string, IBAN: string) {
   return await standartQuery(
-    "INSERT INTO account VALUES (IBAN=$1,beneficiary=$2)",
+    'INSERT INTO account VALUES ("IBAN"=$1,beneficiary=$2)',
     [IBAN, beneficiary]
+  );
+}
+
+
+export async function deleteAccount(iban: string) {
+  return await standartQuery(
+    'DELETE FROM account WHERE "IBAN"=$1',
+    [iban]
   );
 }

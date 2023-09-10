@@ -1,7 +1,9 @@
 import express from "express";
 import { host } from "../enviroments";
 import { deleteUser, getAllUsers, getUser } from "../database/userDB";
-import { getAccountBYbeneficiary } from "../database/account";
+import { createAccount, deleteAccount, getAccountBYbeneficiary } from "../database/account";
+import { randomInt, randomUUID } from "crypto";
+import { getTxnBYfrom_iban, getTxnBYto_iban } from "../database/txnDB";
 
 const users = express.Router();
 
@@ -40,7 +42,9 @@ users.patch('/username', async (req,res) => {
 users.get('/balance', async (req,res) => {
     console.log(`GET: ${host}/user/balance`);
     //TODO get balance of an account or user
-    res.status(501).send('Not implemented yet.');
+    const input = await getTxnBYto_iban(req.body.iban);
+    const output = await getTxnBYfrom_iban(req.body.iban);
+    res.status(200).send({ input: input.rows, output: output.rows});
 });
 
 users.get('/account', async (req,res) => {
@@ -51,15 +55,15 @@ users.get('/account', async (req,res) => {
 
 users.post('/account', async (req,res) => {
     console.log(`POST: ${host}/user/account`);
-    //TODO create account
-    //create iban
-    res.status(501).send('Not implemented yet.');
+    const iban = 'BG' + '28' + 'MONI' + randomInt(10000000000000,99999999999999);
+    const result = await createAccount(req.body.beneficiary,iban);
+    res.status(200).send(result);
 });
 
 users.delete('/account', async (req,res) => {
     console.log(`DELETE: ${host}/user/account`);
-    //TODO
-    res.status(501).send('Not implemented yet.');
+    const result = await deleteAccount(req.body.iban as string);
+    res.status(200).send(result);
 });
 
 users.patch('/forgotten', async (req,res) => {
