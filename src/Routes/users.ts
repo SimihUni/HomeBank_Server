@@ -52,15 +52,23 @@ users.get("/", async (req, res) => {
 
 users.delete("/", async (req, res) => {
   console.log(`DELETE: ${host}/user/`);
-  if (req.body.email == undefined) {
+  if (req.body?.email === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
   try {
-    //TODO Check if all account of this user are with zero balance
-
-    const user = await deleteUser(req.body.email as string);
-    res.status(200).send(user);
+    const accounts = await getAccountBYbeneficiary(req.body.email as string);
+    if(accounts.rowCount > 0){
+      res.status(403).send("User still has accounts, can't delete it.");
+      return;
+    }
+    const result = await deleteUser(req.body.email as string);
+    if (result.rowCount == 1) {
+      res.status(200).send("User deleted.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
     res.status(500).send("Internal server error");
@@ -69,7 +77,7 @@ users.delete("/", async (req, res) => {
 
 users.patch("/username", async (req, res) => {
   console.log(`PATCH: ${host}/user/username`);
-  if (req.body.email == undefined || req.body.new_username == undefined) {
+  if (req.body?.email === undefined || req.body?.new_username === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -78,16 +86,21 @@ users.patch("/username", async (req, res) => {
       req.body.email as string,
       req.body.new_username as string
     );
-    res.status(200).send(result);
+    if (result.rowCount == 1) {
+      res.status(200).send("Username changed.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
 users.get("/balance", async (req, res) => {
   console.log(`GET: ${host}/user/balance`);
-  if (req.body.iban == undefined) {
+  if (req.body?.iban === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -95,16 +108,22 @@ users.get("/balance", async (req, res) => {
     const input = await getTxnBYto_iban(req.body.iban);
     const output = await getTxnBYfrom_iban(req.body.iban);
     const balance = await getCurrentBalance(req.body.iban);
-    res.status(200).send({ input: input.rows, output: output.rows, balance });
+    res
+      .status(200)
+      .send({
+        input: input.rows,
+        output: output.rows,
+        balance: balance.rows[0].balance,
+      });
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
-users.get("/account", async (req, res) => {
-  console.log(`GET: ${host}/user/account`);
-  if (req.body.beneficiary == undefined) {
+users.get("/accounts", async (req, res) => {
+  console.log(`GET: ${host}/user/accounts`);
+  if (req.body?.beneficiary === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -115,13 +134,13 @@ users.get("/account", async (req, res) => {
     res.status(200).send(all_users.rows);
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
 users.post("/account", async (req, res) => {
   console.log(`POST: ${host}/user/account`);
-  if (req.body.beneficiary == undefined) {
+  if (req.body?.beneficiary === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -129,33 +148,48 @@ users.post("/account", async (req, res) => {
     const iban =
       "BG" + "28" + "MONI" + randomInt(10000000000000, 99999999999999);
     const result = await createAccount(req.body.beneficiary, iban);
-    res.status(200).send(result);
+
+    if (result.rowCount == 1) {
+      res.status(201).send("New account created.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
 users.delete("/account", async (req, res) => {
   console.log(`DELETE: ${host}/user/account`);
-  if (req.body.iban == undefined) {
+  if (req.body?.iban === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
   try {
-    //TODO check if balance is non zero
-
+    const balance = await getCurrentBalance(req.body.iban as string);
+    if(balance.rows[0].balance !== 0){
+      res.status(403).send("Account has positive balance, can't delete it.");
+      return;
+    }
     const result = await deleteAccount(req.body.iban as string);
-    res.status(200).send(result);
+
+    if (result.rowCount == 1) {
+      res.status(200).send("Account deleted.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
 users.patch("/forgotten", async (req, res) => {
   console.log(`PATCH: ${host}/user/forgotten`);
-  if (req.body.email == undefined || req.body.password == undefined) {
+  if (req.body?.email === undefined || req.body?.password === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -164,16 +198,21 @@ users.patch("/forgotten", async (req, res) => {
       req.body.email as string,
       req.body.password as string
     );
-    res.status(200).send(result);
+    if (result.rowCount == 1) {
+      res.status(200).send("Password changed.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 
 users.patch("/role", async (req, res) => {
   console.log(`PATCH: ${host}/user/role`);
-  if (req.body.email == undefined || req.body.role == undefined) {
+  if (req.body?.email === undefined || req.body?.role === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
@@ -182,10 +221,15 @@ users.patch("/role", async (req, res) => {
       req.body.email as string,
       req.body.role as string
     );
-    res.status(200).send(result);
+    if (result.rowCount == 1) {
+      res.status(200).send("Role changed.");
+    } else {
+      //rowCount should be 0 if email is not found
+      res.status(404).send("Not found.");
+    }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
-    res.status(500).send("Internal server error");
+    res.status(500).send("Internal server error.");
   }
 });
 

@@ -29,14 +29,14 @@ export async function createTxn(
   tax: number
 ) {
   return await standartQuery(
-    "INSERT INTO transactions (from_iban,to_iban,amount,reason,tax) VALUES ($1,$2,$3,$4,$5)",
+    "INSERT INTO transactions (from_iban,to_iban,amount,reason,tax) VALUES ($1::iban,$2::iban,$3,$4,$5)",
     [from_iban, to_iban, amount, reason, tax]
   );
 }
 
 export async function getCurrentBalance(iban: string) {
   return await standartQuery(
-    "(SELECT SUM(amount) FROM transactions WHERE to_iban=$1) - (SELECT SUM(amount) FROM transactions WHERE from_iban=$1)",
+    "SELECT (SELECT CASE WHEN COUNT(to_iban) > 0 THEN SUM(amount) ELSE 0 END FROM transactions WHERE to_iban=$1) - (SELECT CASE WHEN COUNT(from_iban) > 0 THEN SUM(amount) ELSE 0 END FROM transactions WHERE from_iban=$1) as balance",
     [iban]
   );
 }
