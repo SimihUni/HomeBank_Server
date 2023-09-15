@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 
+//database config
 export const pool = new Pool({
   host: "localhost",
   port: 5432,
@@ -10,14 +11,7 @@ export const pool = new Pool({
   application_name: "HomeBank Server",
 });
 
-// export const query = async (text: string | QueryConfig<any>, params: any) => {
-//   const start = Date.now();
-//   const res = await pool.query(text, params);
-//   const duration = Date.now() - start;
-//   console.log("executed query", { text, duration, rows: res.rowCount });
-//   return res;
-// };
-
+//copied from pg documentation
 export const getClient = async () => {
   const client = await pool.connect();
   const query = client.query;
@@ -56,7 +50,14 @@ export const getClient = async () => {
   return client;
 };
 
-
+/**
+ * Function for handling standard parameterized queries to the DB
+ * 
+ * May throw error if any, and logs it to console.error
+ * @param text query (use $1, $2 and so on for the values)
+ * @param values array with values referenced in the query
+ * @returns result from query
+ */
 export async function standartQuery(text: string, values?: any[]) {
   const client = await getClient();
   try {
