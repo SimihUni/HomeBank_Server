@@ -36,3 +36,24 @@ export async function checkPassword(email: string, password: string) {
     [email,password]
   );
 }
+
+export async function changePassword(email: string, password: string) {
+  return await standartQuery(
+    "UPDATE users SET password_hash=crypt($2, gen_salt('bf')) WHERE email=$1",
+    [email,password]
+  );
+}
+
+export async function changeRole(email: string, role: string) {
+  return await standartQuery(
+    "UPDATE users SET role=$2 WHERE email=$1",
+    [email,role]
+  );
+}
+
+export async function changeUsername(email: string, username: string) {
+  return await standartQuery(
+    "UPDATE users SET username=$2 WHERE email=$1",
+    [email,username]
+  );
+}

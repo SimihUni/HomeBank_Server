@@ -6,12 +6,19 @@ const txns = express.Router();
 
 txns.get("/", async (req, res) => {
   console.log(`GET: ${host}/txn/`);
-  const all_users = await getTxnBYtime(req.query.timestamp as string);
-  res.status(200).send(all_users.rows);
+  try {
+    const all_users = await getTxnBYtime(req.query.timestamp as string);
+    res.status(200).send(all_users.rows);
+  } catch (error) {
+    console.error("Middleware layer, error notification:", error);
+    res.status(500).send("Internal server error");
+  }
 });
 
 txns.post("/", async (req, res) => {
   console.log(`POST: ${host}/txn/`);
+
+  //NOTE TO SELF = this is for admin use only, there are no checks for avalability of a user
   const result = await createTxn(
     req.body.from_iban as string,
     req.body.to_iban as string,

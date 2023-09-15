@@ -1,4 +1,4 @@
-import { standartQuery } from "./config";
+import { getClient, standartQuery } from "./config";
 
 export async function getTxnBYtime(time: string) {
   return await standartQuery(
@@ -31,5 +31,12 @@ export async function createTxn(
   return await standartQuery(
     "INSERT INTO transactions (from_iban,to_iban,amount,reason,tax) VALUES ($1,$2,$3,$4,$5)",
     [from_iban, to_iban, amount, reason, tax]
+  );
+}
+
+export async function getCurrentBalance(iban: string) {
+  return await standartQuery(
+    "(SELECT SUM(amount) FROM transactions WHERE to_iban=$1) - (SELECT SUM(amount) FROM transactions WHERE from_iban=$1)",
+    [iban]
   );
 }
