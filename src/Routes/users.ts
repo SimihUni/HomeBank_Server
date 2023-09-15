@@ -36,8 +36,10 @@ users.get("/all", async (req, res) => {
 
 users.get("/", async (req, res) => {
   console.log(`GET: ${host}/user/`);
-  if (req.body.email == undefined) {
+  console.log(req.body);
+  if (req.body?.email === undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const user = await getUser(req.body.email as string);
@@ -52,6 +54,7 @@ users.delete("/", async (req, res) => {
   console.log(`DELETE: ${host}/user/`);
   if (req.body.email == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     //TODO Check if all account of this user are with zero balance
@@ -68,6 +71,7 @@ users.patch("/username", async (req, res) => {
   console.log(`PATCH: ${host}/user/username`);
   if (req.body.email == undefined || req.body.new_username == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const result = await changeUsername(
@@ -85,6 +89,7 @@ users.get("/balance", async (req, res) => {
   console.log(`GET: ${host}/user/balance`);
   if (req.body.iban == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const input = await getTxnBYto_iban(req.body.iban);
@@ -101,6 +106,7 @@ users.get("/account", async (req, res) => {
   console.log(`GET: ${host}/user/account`);
   if (req.body.beneficiary == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const all_users = await getAccountBYbeneficiary(
@@ -117,6 +123,7 @@ users.post("/account", async (req, res) => {
   console.log(`POST: ${host}/user/account`);
   if (req.body.beneficiary == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const iban =
@@ -133,6 +140,7 @@ users.delete("/account", async (req, res) => {
   console.log(`DELETE: ${host}/user/account`);
   if (req.body.iban == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     //TODO check if balance is non zero
@@ -149,6 +157,7 @@ users.patch("/forgotten", async (req, res) => {
   console.log(`PATCH: ${host}/user/forgotten`);
   if (req.body.email == undefined || req.body.password == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const result = await changePassword(
@@ -166,6 +175,7 @@ users.patch("/role", async (req, res) => {
   console.log(`PATCH: ${host}/user/role`);
   if (req.body.email == undefined || req.body.role == undefined) {
     res.status(400).send("Bad request.");
+    return;
   }
   try {
     const result = await changeRole(
