@@ -7,6 +7,13 @@ export async function getAccountBYbeneficiary(beneficiary: string) {
   );
 }
 
+export async function getAccountBYiban(iban: string) {
+  return await standartQuery(
+    'SELECT ("IBAN", beneficiary) FROM account WHERE "IBAN"=$1',
+    [iban]
+  );
+}
+
 export async function createAccount(beneficiary: string, IBAN: string) {
   return await standartQuery(
     'INSERT INTO account VALUES ($1::iban,$2::email)',

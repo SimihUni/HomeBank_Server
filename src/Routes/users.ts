@@ -13,17 +13,18 @@ import {
   deleteAccount,
   getAccountBYbeneficiary,
 } from "../database/account";
-import { randomInt, randomUUID } from "crypto";
+import { randomInt } from "crypto";
 import {
   getCurrentBalance,
   getTxnBYfrom_iban,
   getTxnBYto_iban,
 } from "../database/txnDB";
+import { AccessTokenAdminChecker, AccessTokenChecker } from "../auth_utils";
 
 const users = express.Router();
 
 //admin access
-users.get("/all", async (req, res) => {
+users.get("/all", AccessTokenAdminChecker, async (req, res) => {
   console.log(`GET: ${host}/user/all`);
   try {
     const all_users = await getAllUsers();
@@ -34,7 +35,7 @@ users.get("/all", async (req, res) => {
   }
 });
 
-users.get("/", async (req, res) => {
+users.get("/", AccessTokenChecker, async (req, res) => {
   console.log(`GET: ${host}/user/`);
   console.log(req.body);
   if (req.body?.email === undefined) {
@@ -50,7 +51,7 @@ users.get("/", async (req, res) => {
   }
 });
 
-users.delete("/", async (req, res) => {
+users.delete("/", AccessTokenChecker, async (req, res) => {
   console.log(`DELETE: ${host}/user/`);
   if (req.body?.email === undefined) {
     res.status(400).send("Bad request.");
@@ -75,7 +76,7 @@ users.delete("/", async (req, res) => {
   }
 });
 
-users.patch("/username", async (req, res) => {
+users.patch("/username", AccessTokenChecker, async (req, res) => {
   console.log(`PATCH: ${host}/user/username`);
   if (req.body?.email === undefined || req.body?.new_username === undefined) {
     res.status(400).send("Bad request.");
@@ -98,7 +99,7 @@ users.patch("/username", async (req, res) => {
   }
 });
 
-users.get("/balance", async (req, res) => {
+users.get("/balance", AccessTokenChecker, async (req, res) => {
   console.log(`GET: ${host}/user/balance`);
   if (req.body?.iban === undefined) {
     res.status(400).send("Bad request.");
@@ -121,15 +122,15 @@ users.get("/balance", async (req, res) => {
   }
 });
 
-users.get("/accounts", async (req, res) => {
+users.get("/accounts", AccessTokenChecker, async (req, res) => {
   console.log(`GET: ${host}/user/accounts`);
-  if (req.body?.beneficiary === undefined) {
+  if (req.body?.email === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
   try {
     const all_users = await getAccountBYbeneficiary(
-      req.body.beneficiary as string
+      req.body.email as string
     );
     res.status(200).send(all_users.rows);
   } catch (error) {
@@ -138,16 +139,16 @@ users.get("/accounts", async (req, res) => {
   }
 });
 
-users.post("/account", async (req, res) => {
+users.post("/account", AccessTokenChecker, async (req, res) => {
   console.log(`POST: ${host}/user/account`);
-  if (req.body?.beneficiary === undefined) {
+  if (req.body?.email === undefined) {
     res.status(400).send("Bad request.");
     return;
   }
   try {
     const iban =
       "BG" + "28" + "MONI" + randomInt(10000000000000, 99999999999999);
-    const result = await createAccount(req.body.beneficiary, iban);
+    const result = await createAccount(req.body.email, iban);
 
     if (result.rowCount == 1) {
       res.status(201).send("New account created.");
@@ -161,7 +162,7 @@ users.post("/account", async (req, res) => {
   }
 });
 
-users.delete("/account", async (req, res) => {
+users.delete("/account", AccessTokenChecker, async (req, res) => {
   console.log(`DELETE: ${host}/user/account`);
   if (req.body?.iban === undefined) {
     res.status(400).send("Bad request.");
@@ -187,7 +188,7 @@ users.delete("/account", async (req, res) => {
   }
 });
 
-users.patch("/forgotten", async (req, res) => {
+users.patch("/forgotten", AccessTokenChecker, async (req, res) => {
   console.log(`PATCH: ${host}/user/forgotten`);
   if (req.body?.email === undefined || req.body?.password === undefined) {
     res.status(400).send("Bad request.");
@@ -210,7 +211,8 @@ users.patch("/forgotten", async (req, res) => {
   }
 });
 
-users.patch("/role", async (req, res) => {
+//admin access
+users.patch("/role", AccessTokenAdminChecker, async (req, res) => {
   console.log(`PATCH: ${host}/user/role`);
   if (req.body?.email === undefined || req.body?.role === undefined) {
     res.status(400).send("Bad request.");

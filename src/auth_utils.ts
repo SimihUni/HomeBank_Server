@@ -1,9 +1,10 @@
 import * as jose from "jose";
 import { host, privateJWK, publicJWK } from "./enviroments";
+import { getAccountBYiban } from "./database/account";
+import { NextFunction, Request, Response } from "express";
 
 export async function authenticateBearer(
-  token: string,
-  email: string
+  token: string
 ): Promise<boolean> {
   try {
     const { payload, protectedHeader } = await jose.jwtVerify(
@@ -12,7 +13,6 @@ export async function authenticateBearer(
       {
         algorithms: ["ES256"],
         issuer: host,
-        audience: email,
         subject: "Client Authorization",
         requiredClaims: ["isAdmin"],
       }
@@ -20,7 +20,7 @@ export async function authenticateBearer(
     //console.log(payload);
     return true;
   } catch (error) {
-    console.error("Error when verifying auth tokens. Error: ", error);
+    console.error("Error when verifying access token. Error: ", error);
     return false;
   }
 }
@@ -55,10 +55,78 @@ export async function checkOwnership(
   token: string,
   to_check: { email?: string; iban?: string }
 ): Promise<boolean> {
-    //TODO switch email iban
-    //TODO get ibans of email
-  return false;
+  let result = false;
+  try {
+    if(jose.decodeJwt(token).isAdmin){
+        return true;
+    }
+    if (to_check.email !== undefined) {
+      if (jose.decodeJwt(token).aud === to_check.email) {
+        result = true;
+      }
+    }
+    if (to_check.iban !== undefined) {
+      const account_query = await getAccountBYiban(to_check.iban);
+      if (account_query.rowCount == 0) {
+        result = false;
+        return result;
+      }
+      if (jose.decodeJwt(token).aud === account_query.rows[0].beneficiary) {
+        result = true;
+      }
+    }
+  } catch (error) {
+    console.error("Error when checking ownership with access tokens.");
+    return false;
+  }
+  return result;
 }
 
+export async function AccessTokenAdminChecker(req: Request, res: Response, next: NextFunction) {
+    if(req.headers.authorization === undefined){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    if((req.headers.authorization as string).split(' ')[0] !== 'Bearer'){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    const token = (req.headers.authorization as string).split(' ')[1];
+    if(! await authenticateBearer(token)){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    if(!jose.decodeJwt(token).isAdmin){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    next();
+}
 
-//TODO middleware for auth and ownership
+export async function AccessTokenChecker(req: Request, res: Response, next: NextFunction) {
+    if(req.headers.authorization === undefined){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    if((req.headers.authorization as string).split(' ')[0] !== 'Bearer'){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    if(! await authenticateBearer((req.headers.authorization as string).split(' ')[1])){
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    if((req.body.email === undefined && req.body.iban === undefined) || (req.body.email !== undefined && req.body.iban !== undefined)){
+        res.status(400).send("Bad request.");
+        return;
+    }
+    const to_check = {
+        email: req.body.email,
+        iban: req.body.iban
+    }
+    if(! await checkOwnership((req.headers.authorization as string).split(' ')[1],to_check)) {
+        res.status(401).send("Unauthorized.");
+        return;
+    }
+    next();
+}

@@ -1,6 +1,6 @@
 import express from "express";
 import { host } from "../enviroments";
-import { checkPassword, createUser } from "../database/userDB";
+import { checkPassword, createUser, getUser } from "../database/userDB";
 import { authenticateBearer, generateAuthTokens } from "../auth_utils";
 
 const authN = express.Router();
@@ -20,9 +20,8 @@ authN.post("/login", async (req, res) => {
     }
     if (result.rows[0].pswmatch) {
       // pass match yes
-
-      //TODO check if admin
-      res.status(202).json( await generateAuthTokens(req.body?.email as string, true));
+      const isAdmin = (await getUser(req.body?.email as string)).rows[0].role === "admin";
+      res.status(202).json( await generateAuthTokens(req.body?.email as string, isAdmin));
       return;
     } else {
       // pass match no
@@ -38,7 +37,6 @@ authN.post("/login", async (req, res) => {
 authN.post("/refresh", async (req, res) => {
   console.log(`POST: ${host}/auth/refresh`);
   const bearer = (req.headers.authorization as string).split(" ")[1];
-  authenticateBearer(bearer,req.body.email);
   //TODO post refresh token for auth token
   res.status(501).send("Not implemented yet.");
 });
