@@ -1,6 +1,7 @@
 import express from "express";
 import { host } from "../enviroments";
 import { checkPassword, createUser } from "../database/userDB";
+import { authenticateBearer, generateAuthTokens } from "../auth_utils";
 
 const authN = express.Router();
 
@@ -20,15 +21,14 @@ authN.post("/login", async (req, res) => {
     if (result.rows[0].pswmatch) {
       // pass match yes
 
-      //TODO send refresh and auth tokens
-      res.status(202).send("Login successfull.");
+      //TODO check if admin
+      res.status(202).json( await generateAuthTokens(req.body?.email as string, true));
       return;
     } else {
       // pass match no
       res.status(400).send("Bad credentials.");
       return;
     }
-    res.status(200).send(result);
   } catch (error) {
     console.error("Middleware layer, error notification:", error);
     res.status(500).send("Internal server error.");
@@ -37,6 +37,8 @@ authN.post("/login", async (req, res) => {
 
 authN.post("/refresh", async (req, res) => {
   console.log(`POST: ${host}/auth/refresh`);
+  const bearer = (req.headers.authorization as string).split(" ")[1];
+  authenticateBearer(bearer,req.body.email);
   //TODO post refresh token for auth token
   res.status(501).send("Not implemented yet.");
 });
@@ -63,7 +65,7 @@ authN.post("/register", async (req, res) => {
       res.status(201).send("User created.");
     } else {
       //rowCount should be 0 if email is not found
-      res.status(404).send("Not found.");
+      res.status(400).send("Failed.");
     }
   } catch (error) {
     console.error("Middleware layer, error notification:", error);

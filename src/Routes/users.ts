@@ -110,7 +110,7 @@ users.get("/balance", async (req, res) => {
     const balance = await getCurrentBalance(req.body.iban);
     res
       .status(200)
-      .send({
+      .json({
         input: input.rows,
         output: output.rows,
         balance: balance.rows[0].balance,
