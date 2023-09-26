@@ -147,8 +147,8 @@ users.post("/account", AccessTokenChecker, async (req, res) => {
   }
   try {
     const iban =
-      "BG" + "28" + "MONI" + randomInt(10000000000000, 99999999999999);
-    const result = await createAccount(req.body.email, iban);
+      "BG" + "28" + "MONI" + randomInt(10000000000000, 99999999999999); 
+    const result = await createAccount(req.body.email, iban, req.body?.name);
 
     if (result.rowCount == 1) {
       res.status(201).send("New account created.");
