@@ -27,7 +27,7 @@ const db_host = process.env.DB_HOSTNAME
   ? process.env.DB_HOSTNAME
   : default_db_host;
 const db_password = process.env.DB_PASSWORD
-  ? process.env.DB_HOSTNAME
+  ? process.env.DB_PASSWORD
   : default_db_password;
 
 export { port, host, db_port, db_host, db_password, privateJWK, publicJWK };
