@@ -1,13 +1,14 @@
 import { Pool } from "pg";
+import { db_host, db_port, db_password } from "../enviroments";
 
 //database config
 export const pool = new Pool({
-  host: "localhost",
-  port: 5432,
+  host: db_host,
+  port: Number(db_port),
   max: 20,
   database: "homebank",
   user: "homebank",
-  password: "password",
+  password: db_password,
   application_name: "HomeBank Server",
 });
 
