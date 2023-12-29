@@ -27,3 +27,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: npx markdownlint-cli **/*.md
+  linter:
+    name: ESLint (JS/TS) Action
+    runs-on: ubuntu-latest
+    steps:
+      - uses: iCrawl/action-eslint@v1
