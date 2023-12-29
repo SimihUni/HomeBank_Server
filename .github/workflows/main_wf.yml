@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: editorconfig-checker/action-editorconfig-checker@v1
+      - uses: zbeekman/EditorConfig-Action@v1.1.1
   markdown-lint:
     name: markdown lint
     runs-on: ubuntu-latest
