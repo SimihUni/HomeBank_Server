@@ -35,15 +35,6 @@ jobs:
       #  env:
       #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  dependency-review:
-    needs: [ linter ]
-    runs-on: ubuntu-latest
-    steps:
-      - name: "Checkout Repository"
-        uses: actions/checkout@v4
-      - name: "Dependency Review"
-        uses: actions/dependency-review-action@v3
-  
   # unit testing
   
 
@@ -66,7 +57,7 @@ jobs:
   # test database versioning scripts
   # build docker container
   build-test-docker:
-      needs: [ dependency-review , sonar-scan ]
+      needs: [ sonar-scan ]
       runs-on: ubuntu-latest
       #enviroment: build-docker
       steps:
