@@ -2,3 +2,4 @@ node_modules
 dist
 sslcert
 keys
+yarn-error.log
