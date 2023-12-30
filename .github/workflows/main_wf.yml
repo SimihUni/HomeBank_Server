@@ -65,7 +65,7 @@ jobs:
           uses: actions/checkout@v4
 
         - name: "Build Image"
-          run: docker build -t simih/hbp:latest simih/hbp:${{ github.sha }} .
+          run: docker-build -t simih/hbp:latest simih/hbp:${{ github.sha }} .
 
         - name: "Run Trivy vulnerability scanner"
           uses: aquasecurity/trivy-action@master
