@@ -22,8 +22,8 @@ txns.get('/', AccessTokenAdminChecker, async (req, res) => {
       res.status(400).send('Bad request.')
       return
     }
-    const all_users = await getTxnBYtime(req.query.timestamp as string)
-    res.status(200).send(all_users.rows)
+    const allUsers = await getTxnBYtime(req.query.timestamp as string)
+    res.status(200).send(allUsers.rows)
   } catch (error) {
     console.error('Middleware layer, error notification:', error)
     res.status(500).send('Internal server error.')
@@ -48,7 +48,7 @@ txns.post('/', AccessTokenChecker, async (req, res) => {
       return
     }
     // NOTE don't know if amount and tax are numbers
-    if ((await getCurrentBalance(req.body.iban)).rows[0].balance < req.body.amount + req.body.tax) {
+    if ((await getCurrentBalance(req.body.iban)).rows[0].balance < Number(req.body.amount) + Number(req.body.tax)) {
       res.status(400).send("Account doesn't have the needed balance for this transaction.")
     }
     if ((await getAccountBYiban(req.body.to_iban)).rowCount !== 1) {
@@ -61,7 +61,7 @@ txns.post('/', AccessTokenChecker, async (req, res) => {
       req.body.reason as string,
       req.body.tax as number
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(201).send('Transaction created.')
     } else {
       // rowCount should be 0 if email is not found
@@ -86,7 +86,7 @@ txns.post('/admin', AccessTokenAdminChecker, async (req, res) => {
       res.status(400).send('Bad request.')
       return
     }
-    if (req.body.from_iban == req.body.to_iban) {
+    if (req.body.from_iban === req.body.to_iban) {
       res.status(400).send('Bad request.')
       return
     }
@@ -98,7 +98,7 @@ txns.post('/admin', AccessTokenAdminChecker, async (req, res) => {
       req.body.reason as string,
       req.body.tax as number
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(201).send('Transaction created.')
     } else {
       // rowCount should be 0 if email is not found

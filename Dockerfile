@@ -6,6 +6,8 @@ COPY package.json yarn.lock ./
 
 RUN yarn install
 
+RUN yarn cache clean
+
 COPY . .
 
 RUN yarn build
@@ -16,4 +18,4 @@ ENV DB_PASSWORD="password"
 
 EXPOSE 3000
 
-CMD yarn start
+CMD [ "yarn" , "start" ]

@@ -21,12 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: greut/eclint-action@v0
-  markdown-lint:
-    name: markdown lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npx markdownlint-cli **/*.md
   linter:
     name: Super linter
     runs-on: ubuntu-latest

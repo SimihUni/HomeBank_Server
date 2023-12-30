@@ -7,7 +7,7 @@ const default_db_port = '5432'
 const default_host = 'localhost'
 const default_db_host = 'localhost'
 const default_protocol = 'http://'
-const default_db_password = 'password'
+const default_db_password = ''
 
 const port = process.env.PORT
   ? Number(process.env.PORT) < 1000 && Number(process.env.PORT) > 9999

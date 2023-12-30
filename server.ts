@@ -2,7 +2,8 @@
 
 import routerConf from './src/routerConfig'
 import { port } from './src/enviroments'
-const http = require('http')
+import { createServer } from 'http'
+import express from 'express'
 
 // for HTTPS
 //= ===================================================================
@@ -13,7 +14,7 @@ const http = require('http')
 // const credentials = {key: privateKey, cert: certificate};
 //= ===================================================================
 
-const express = require('express')
+
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -25,7 +26,7 @@ app.use('/', routerConf)
 
 //= =========================================
 
-const httpServer = http.createServer(app)
+const httpServer = createServer(app)
 httpServer.listen(port)
 console.log(`Listening on port:${port}`)
 

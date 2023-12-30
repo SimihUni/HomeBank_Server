@@ -64,7 +64,7 @@ users.delete('/', AccessTokenChecker, async (req, res) => {
       return
     }
     const result = await deleteUser(req.body.email as string)
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(200).send('User deleted.')
     } else {
       // rowCount should be 0 if email is not found
@@ -87,7 +87,7 @@ users.patch('/username', AccessTokenChecker, async (req, res) => {
       req.body.email as string,
       req.body.new_username as string
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(200).send('Username changed.')
     } else {
       // rowCount should be 0 if email is not found
@@ -150,7 +150,7 @@ users.post('/account', AccessTokenChecker, async (req, res) => {
       'BG' + '28' + 'MONI' + randomInt(10000000000000, 99999999999999)
     const result = await createAccount(req.body.email, iban, req.body?.name)
 
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(201).send('New account created.')
     } else {
       // rowCount should be 0 if email is not found
@@ -176,7 +176,7 @@ users.delete('/account', AccessTokenChecker, async (req, res) => {
     }
     const result = await deleteAccount(req.body.iban as string)
 
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(200).send('Account deleted.')
     } else {
       // rowCount should be 0 if email is not found
@@ -199,7 +199,7 @@ users.patch('/forgotten', AccessTokenChecker, async (req, res) => {
       req.body.email as string,
       req.body.password as string
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(200).send('Password changed.')
     } else {
       // rowCount should be 0 if email is not found
@@ -223,7 +223,7 @@ users.patch('/role', AccessTokenAdminChecker, async (req, res) => {
       req.body.email as string,
       req.body.role as string
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(200).send('Role changed.')
     } else {
       // rowCount should be 0 if email is not found

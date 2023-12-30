@@ -13,7 +13,7 @@ authN.post('/login', async (req, res) => {
   }
   try {
     const result = await checkPassword(req.body.email, req.body.password)
-    if (result.rowCount == 0) {
+    if (result.rowCount === 0) {
       // no such users
       res.status(400).send('Bad credentials.')
       return
@@ -34,7 +34,7 @@ authN.post('/login', async (req, res) => {
 
 authN.post('/refresh', async (req, res) => {
   console.log(`POST: ${host}/auth/refresh`)
-  const bearer = (req.headers.authorization as string).split(' ')[1]
+  //const bearer = (req.headers.authorization as string).split(' ')[1]
   // TODO post refresh token for auth token
   res.status(501).send('Not implemented yet.')
 })
@@ -57,7 +57,7 @@ authN.post('/register', async (req, res) => {
       req.body.username,
       'client'
     )
-    if (result.rowCount == 1) {
+    if (result.rowCount === 1) {
       res.status(201).send('User created.')
     } else {
       // rowCount should be 0 if email is not found

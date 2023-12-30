@@ -1,7 +1,7 @@
 import authN from './Routes/authentications'
 import users from './Routes/users'
 import txns from './Routes/transactions'
-const express = require('express')
+import express from 'express'
 
 const routerConf = express.Router()
 
