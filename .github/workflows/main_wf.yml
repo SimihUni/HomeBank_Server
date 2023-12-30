@@ -7,26 +7,96 @@ on:
   # Triggers the workflow on push or pull request events but only
   # for the "main" branch
   push:
-    branches: [ "main" , "dev" ]
+    branches: ["main", "dev"]
   pull_request:
-    branches: [ "main" , "dev" ]
+    branches: ["main", "dev"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  # Code
   editorconfig-check:
     name: .editorconfig lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: greut/eclint-action@v0
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+      - name: ".editorconfig lint"
+        uses: greut/eclint-action@v0
   linter:
+    needs: [ editorconfig-check ]
     name: Super linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: super-linter/super-linter@v5.7.2
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+      - name: "Lint and Git Leaks"
+        uses: super-linter/super-linter@v5.7.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    needs: [ linter ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v4
+      - name: "Dependency Review"
+        uses: actions/dependency-review-action@v3
+  
+  # unit testing
+  
+
+
+  # sonar scan
+  sonar-scan:
+    needs: [ linter ]
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout repo
+          uses: actions/checkout@v4
+
+        - name: SonarCloud Scan
+          uses: SonarSource/sonarcloud-github-action@v2.0.2
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+            SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  
+  
+  # test database versioning scripts
+  # build docker container
+  build-test-docker:
+      needs: [ dependency-review , sonar-scan ]
+      runs-on: ubuntu-latest
+      #enviroment: build-docker
+      steps:
+        - name: "Checkout repo"
+          uses: actions/checkout@v4
+
+        - name: "Build Image"
+          run: |
+           docker build \
+            --build-arg port=${{ env.PORT }} \
+            --build-arg db_port=${{ env.DB_PORT }} \
+            --build-arg hostname=${{ env.HOSTNAME }} \
+            --build-arg db_hostname=${{ env.DB_HOSTNAME }} \
+            --build-arg db_password=${{ secrets.DB_PASSWORD }} \
+            -t simih/hbp:latest simih/hbp:${{ github.sha }} .
+
+        - name: "Run Trivy vulnerability scanner"
+          uses: aquasecurity/trivy-action@master
+          with:
+            image-ref: 'simih/hbp:latest'
+            format: 'table'
+            exit-code: '1'
+            ignore-unfixed: true
+            severity: 'CRITICAL'
+
+        - name: "Save artifact"
+          uses: actions/upload-artifact@v4
+          with:
+            name: build-artifact
+            path: ./
+
+  # push docker container
+

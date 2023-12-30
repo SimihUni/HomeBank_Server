@@ -12,9 +12,10 @@ COPY . .
 
 RUN yarn build
 
-ENV PORT="3000" DB_PORT="5432" 
-ENV HOSTNAME="localhost" DB_HOSTNAME="localhost"
-ENV DB_PASSWORD=""
+ARG port db_port hostname db_hostname db_password
+
+ENV PORT=$port DB_PORT=$db_port HOSTNAME=$hostname DB_HOSTNAME=$db_hostname
+ENV DB_PASSWORD=$db_password
 
 EXPOSE 3000
 
