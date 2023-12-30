@@ -47,7 +47,6 @@ txns.post('/', AccessTokenChecker, async (req, res) => {
       res.status(400).send('Bad request.')
       return
     }
-    // NOTE don't know if amount and tax are numbers
     if ((await getCurrentBalance(req.body.iban)).rows[0].balance < Number(req.body.amount) + Number(req.body.tax)) {
       res.status(400).send("Account doesn't have the needed balance for this transaction.")
     }
@@ -55,7 +54,7 @@ txns.post('/', AccessTokenChecker, async (req, res) => {
       res.status(404).send("to_iban doesn't exist.")
     }
     const result = await createTxn(
-      req.body.from_iban as string,
+      req.body.iban as string,
       req.body.to_iban as string,
       req.body.amount as number,
       req.body.reason as string,

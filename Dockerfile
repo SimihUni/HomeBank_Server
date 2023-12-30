@@ -14,7 +14,7 @@ RUN yarn build
 
 ENV PORT="3000" DB_PORT="5432" 
 ENV HOSTNAME="localhost" DB_HOSTNAME="localhost"
-ENV DB_PASSWORD="password"
+ENV DB_PASSWORD=""
 
 EXPOSE 3000
 
