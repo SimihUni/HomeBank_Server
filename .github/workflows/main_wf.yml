@@ -53,8 +53,6 @@ jobs:
         run: |
           echo "${{secrets.PB_KEY}}" > dist/src/keys/public.key.json
           echo "${{secrets.PR_KEY}}" > dist/src/keys/private.key.json
-      - name: Check ls
-        run: ls -la dist/src/keys/
       - name: Run tests
         run: yarn test
 

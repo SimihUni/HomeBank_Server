@@ -4,12 +4,13 @@ import { getAccountBYiban } from './database/account'
 import { NextFunction, Request, Response } from 'express'
 
 export async function authenticateBearer (
-  token: string
+  token: string,
+  pbJWK: jose.JWK = publicJWK
 ): Promise<boolean> {
   try {
     // const { payload, protectedHeader } = await jose.jwtVerify(
     //   token,
-    //   await jose.importJWK(publicJWK as jose.JWK, 'ES256'),
+    //   await jose.importJWK(pbJWK as jose.JWK, 'ES256'),
     //   {
     //     algorithms: ['ES256'],
     //     issuer: host,
@@ -25,7 +26,7 @@ export async function authenticateBearer (
   }
 }
 
-export async function generateAuthTokens (email: string, isAdmin: boolean) {
+export async function generateAuthTokens (email: string, isAdmin: boolean, prJWK: jose.JWK = privateJWK) {
   try {
     const accessToken = await new jose.SignJWT({ isAdmin })
       .setIssuer(host)
@@ -34,7 +35,7 @@ export async function generateAuthTokens (email: string, isAdmin: boolean) {
       .setSubject('Client Authorization')
       .setProtectedHeader({ typ: 'JWT', alg: 'ES256' })
       .setAudience(email)
-      .sign(await jose.importJWK(privateJWK, 'ES256'))
+      .sign(await jose.importJWK(prJWK, 'ES256'))
     const refreshToken = await new jose.SignJWT({ isAdmin })
       .setIssuer(host)
       .setIssuedAt()
@@ -42,7 +43,7 @@ export async function generateAuthTokens (email: string, isAdmin: boolean) {
       .setSubject('Client refresh')
       .setProtectedHeader({ typ: 'JWT', alg: 'ES256' })
       .setAudience(email)
-      .sign(await jose.importJWK(privateJWK, 'ES256'))
+      .sign(await jose.importJWK(prJWK, 'ES256'))
     return { accessToken, refreshToken }
   } catch (error) {
     console.error('Error when generating auth tokens.',error)
