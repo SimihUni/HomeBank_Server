@@ -43,16 +43,16 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Make src/keys/
-        run: mkdir src/keys
-      - name: Write secret keys 
-        run: |
-          echo "${{secrets.PB_KEY}}" > src/keys/public.key.json
-          echo "${{secrets.PR_KEY}}" > src/keys/private.key.json
       - name: Install modules
         run: yarn
       - name: Build from ts to js
         run: yarn build
+      - name: Make dist/src/keys/
+        run: mkdir dist/src/keys
+      - name: Write secret keys 
+        run: |
+          echo "${{secrets.PB_KEY}}" > dist/src/keys/public.key.json
+          echo "${{secrets.PR_KEY}}" > dist/src/keys/private.key.json
       - name: Run tests
         run: yarn test
 
