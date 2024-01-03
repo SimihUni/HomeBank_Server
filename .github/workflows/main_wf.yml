@@ -51,8 +51,8 @@ jobs:
         run: mkdir dist/src/keys
       - name: Write secret keys 
         run: |
-          echo "${{secrets.PB_KEY}}" > dist/src/keys/public.key.json
-          echo "${{secrets.PR_KEY}}" > dist/src/keys/private.key.json
+          echo '${{secrets.PB_KEY}}' > dist/src/keys/public.key.json
+          echo '${{secrets.PR_KEY}}' > dist/src/keys/private.key.json
       - name: Run tests
         run: yarn test
 
