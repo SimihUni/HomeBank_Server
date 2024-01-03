@@ -45,7 +45,7 @@ export async function generateAuthTokens (email: string, isAdmin: boolean) {
       .sign(await jose.importJWK(privateJWK, 'ES256'))
     return { accessToken, refreshToken }
   } catch (error) {
-    console.error('Error when generating auth tokens.')
+    console.error('Error when generating auth tokens.',error)
     throw error
   }
 }
