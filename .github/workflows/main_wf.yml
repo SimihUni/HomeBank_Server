@@ -37,7 +37,18 @@ jobs:
 
   # unit testing
   
-
+  unit-tests:
+    needs: [ linter ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Install modules
+        run: yarn
+      - name: Build from ts to js
+        run: yarn build
+      - name: Run tests
+        run: yarn test
 
   # sonar scan
   sonar-scan:
@@ -57,7 +68,7 @@ jobs:
   # test database versioning scripts
   # build docker container
   build-test-docker:
-      needs: [ sonar-scan ]
+      needs: [ sonar-scan, unit-tests ]
       runs-on: ubuntu-latest
       #enviroment: build-docker
       steps:
