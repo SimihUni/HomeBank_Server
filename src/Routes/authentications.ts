@@ -34,7 +34,7 @@ authN.post('/login', async (req, res) => {
 
 authN.post('/refresh', async (req, res) => {
   console.log(`POST: ${host}/auth/refresh`)
-  //const bearer = (req.headers.authorization as string).split(' ')[1]
+  // const bearer = (req.headers.authorization as string).split(' ')[1]
   // TODO post refresh token for auth token
   res.status(501).send('Not implemented yet.')
 })

@@ -1,7 +1,15 @@
-import privateJWK from './keys/private.key.json'
-import publicJWK from './keys/public.key.json'
-// TODO check if priveteJWK and publicJWK are in the right format
+import * as jose from 'jose'
+const { readFileSync } = require('fs')
 
+let privateJWK: jose.JWK
+let publicJWK: jose.JWK
+try {
+  privateJWK = readFileSync('./keys/private.key.json') as jose.JWK
+  publicJWK = readFileSync('./keys/public.key.json') as jose.JWK
+  // TODO check if priveteJWK and publicJWK are in the right format
+} catch (error) {
+  console.error("No crypto keys defined in ./keys/")
+}
 const default_port = '3000'
 const default_db_port = '5432'
 const default_host = 'localhost'

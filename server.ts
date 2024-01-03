@@ -14,7 +14,6 @@ import express from 'express'
 // const credentials = {key: privateKey, cert: certificate};
 //= ===================================================================
 
-
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))

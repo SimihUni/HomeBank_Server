@@ -13,7 +13,7 @@ export const pool = new Pool({
 })
 
 // copied from pg documentation
-export const getClient = async () : Promise<PoolClient> => {
+export const getClient = async (): Promise<PoolClient> => {
   const client = await pool.connect()
   const query = client.query
   const release = client.release
@@ -59,7 +59,7 @@ export const getClient = async () : Promise<PoolClient> => {
  * @param values array with values referenced in the query
  * @returns result from query
  */
-export async function standartQuery (text: string, values?: any[]) : Promise<QueryResult<any>> {
+export async function standartQuery (text: string, values?: any[]): Promise<QueryResult<any>> {
   const client = await getClient()
   try {
     const query_res = await client.query(text, values)

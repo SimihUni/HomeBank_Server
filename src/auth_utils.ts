@@ -34,7 +34,7 @@ export async function generateAuthTokens (email: string, isAdmin: boolean) {
       .setSubject('Client Authorization')
       .setProtectedHeader({ typ: 'JWT', alg: 'ES256' })
       .setAudience(email)
-      .sign(await jose.importJWK(privateJWK as jose.JWK, 'ES256'))
+      .sign(await jose.importJWK(privateJWK, 'ES256'))
     const refreshToken = await new jose.SignJWT({ isAdmin })
       .setIssuer(host)
       .setIssuedAt()
@@ -42,7 +42,7 @@ export async function generateAuthTokens (email: string, isAdmin: boolean) {
       .setSubject('Client refresh')
       .setProtectedHeader({ typ: 'JWT', alg: 'ES256' })
       .setAudience(email)
-      .sign(await jose.importJWK(privateJWK as jose.JWK, 'ES256'))
+      .sign(await jose.importJWK(privateJWK, 'ES256'))
     return { accessToken, refreshToken }
   } catch (error) {
     console.error('Error when generating auth tokens.')
