@@ -10,7 +10,7 @@ try {
   console.log(publicJWK)
   // TODO check if priveteJWK and publicJWK are in the right format
 } catch (error) {
-  console.error("No crypto keys defined in ./keys/")
+  console.error("No crypto keys defined in ./keys/",error)
 }
 const default_port = '3000'
 const default_db_port = '5432'
