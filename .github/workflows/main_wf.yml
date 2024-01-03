@@ -47,8 +47,8 @@ jobs:
         run: mkdir src/keys
       - name: Write secret keys 
         run: |
-          echo ${{secrets.PB_KEY}} > src/keys/public.key.json
-          echo ${{secrets.PR_KEY}} > src/keys/private.key.json
+          echo "${{secrets.PB_KEY}}" > src/keys/public.key.json
+          echo "${{secrets.PR_KEY}}" > src/keys/private.key.json
       - name: Install modules
         run: yarn
       - name: Build from ts to js
