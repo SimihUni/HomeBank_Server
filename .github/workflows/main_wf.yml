@@ -48,7 +48,9 @@ jobs:
       - name: Build from ts to js
         run: yarn build
       - name: Make dist/src/keys/
-        run: mkdir dist/src/keys
+        run: |
+          mkdir dist/src/keys
+          mkdir src/keys
       - name: Write secret keys 
         run: |
           ls -la
