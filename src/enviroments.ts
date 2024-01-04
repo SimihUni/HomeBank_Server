@@ -4,10 +4,10 @@ const { readFileSync } = require('fs')
 let privateJWK: jose.JWK
 let publicJWK: jose.JWK
 try {
-  privateJWK = JSON.parse(readFileSync('./src/keys/private.key.json').toString()) as jose.JWK
-  console.log(privateJWK)
-  publicJWK = JSON.parse(readFileSync('./src/keys/public.key.json').toString()) as jose.JWK
-  console.log(publicJWK)
+  privateJWK = JSON.parse(readFileSync('./src/keys/private.key.json').toString())
+  console.log(typeof(privateJWK))
+  publicJWK = JSON.parse(readFileSync('./src/keys/public.key.json').toString())
+  console.log(typeof(publicJWK))
   // TODO check if priveteJWK and publicJWK are in the right format
 } catch (error) {
   console.error("No crypto keys defined in ./keys/",error)
