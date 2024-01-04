@@ -51,10 +51,9 @@ jobs:
         run: mkdir dist/src/keys
       - name: Write secret keys 
         run: |
+          ls -la
           echo '${{secrets.PB_KEY}}' > dist/src/keys/public.key.json
           echo '${{secrets.PR_KEY}}' > dist/src/keys/private.key.json
-          echo '${{secrets.PB_KEY}}' > src/keys/public.key.json
-          echo '${{secrets.PR_KEY}}' > src/keys/private.key.json
           ls -la dist/src/keys/
           ls -la
           
