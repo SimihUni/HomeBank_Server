@@ -4,15 +4,14 @@ import * as jose from 'jose'
 
 describe("Example unit tests", () => {
     it('Create a Bearer token and refresh token', async () => {
-        const tokens = await generateAuthTokens("example@example.com",false,(await jose.generateKeyPair("ES256")).privateKey)
+        const tokens = await generateAuthTokens("example@example.com",false,privateJWK)
         expect( tokens.accessToken).not.toBe("")
         expect( tokens.refreshToken).not.toBe("")
     })
 
     it('Authenticate a Bearer and Refresh tokens', async () => {
-        const keyPair = await jose.generateKeyPair("ES256")
-        const tokens = await generateAuthTokens("example@example.com",false,keyPair.privateKey)
-        expect(await authenticateBearer(tokens.accessToken,keyPair.publicKey)).toBe(true)
-        expect(await authenticateBearer(tokens.refreshToken,keyPair.publicKey)).toBe(true)
+        const tokens = await generateAuthTokens("example@example.com",false,privateJWK)
+        expect(await authenticateBearer(tokens.accessToken,publicJWK)).toBe(true)
+        expect(await authenticateBearer(tokens.refreshToken,publicJWK)).toBe(true)
     })
 });

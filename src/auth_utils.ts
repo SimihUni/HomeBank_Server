@@ -28,7 +28,6 @@ export async function authenticateBearer (
 
 export async function generateAuthTokens (email: string, isAdmin: boolean, prJWK: jose.JWK = privateJWK) {
   try {
-    console.log(typeof(prJWK))
     const accessToken = await new jose.SignJWT({ isAdmin })
       .setIssuer(host)
       .setIssuedAt()
