@@ -108,4 +108,6 @@ jobs:
               password: ${{ secrets.DOCKERHUB_TOKEN }}
 
         - name: Publish the Docker image
-          run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/hbp:latest ${{ secrets.DOCKERHUB_USERNAME }}/hbp:${{ github.sha }}
+          run: |
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/hbp:latest
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/hbp:${{ github.sha }}
