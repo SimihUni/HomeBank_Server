@@ -12,7 +12,7 @@ COPY . .
 
 RUN yarn build
 
-RUN mkdir dist/src/keys
+RUN mkdir src/keys
 
 EXPOSE 3000
 
