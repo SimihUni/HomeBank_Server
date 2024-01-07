@@ -48,8 +48,7 @@ jobs:
       - name: Build from ts to js
         run: yarn build
       - name: Make src/keys/
-        run: |
-          mkdir dist/src/keys
+        run: mkdir src/keys
       - name: Write secret keys 
         run: |
           echo '${{secrets.PB_KEY}}' > src/keys/public.key.json
