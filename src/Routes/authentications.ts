@@ -5,6 +5,17 @@ import { authenticateBearer, generateAuthTokens } from '../auth_utils'
 
 const authN = express.Router()
 
+
+authN.get('/work', async (req, res) => {
+  console.log(`GET ${host}auth/work`)
+  try{
+  res.status(202).json(await generateAuthTokens('example@example.com', false))
+  } catch (error) {
+    console.error('Middleware layer, error notification:', error)
+    res.status(500).send('Internal server error.')
+  }
+})
+
 authN.post('/login', async (req, res) => {
   console.log(`POST: ${host}/auth/login`)
   if (req.body?.email === undefined || req.body?.password === undefined) {
