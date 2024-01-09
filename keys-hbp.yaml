@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: keys-hbp
+type: Opaque
+data:
+  public.key.json: |
+    ewogICJrdHkiOiAiRUMiLAogICJ4IjogIkh6UG9xc2Ixa3hmclk5NWlUbU9pcjFTS1NQaU5JTXph
+    d3g3UTVueDBySTAiLAogICJ5IjogIm1xT3liSlNIbkFsZHpzaWw1TzlxQl8xQzJ2SVNpTzI2TUZn
+    NWN2Q2N3STQiLAogICJjcnYiOiAiUC0yNTYiCn0K
+  private.key.json: |
+    ewogICJrdHkiOiAiRUMiLAogICJ4IjogIkh6UG9xc2Ixa3hmclk5NWlUbU9pcjFTS1NQaU5JTXph
+    d3g3UTVueDBySTAiLAogICJ5IjogIm1xT3liSlNIbkFsZHpzaWw1TzlxQl8xQzJ2SVNpTzI2TUZn
+    NWN2Q2N3STQiLAogICJjcnYiOiAiUC0yNTYiLAogICJkIjogIjhOSkFnbEt5ZnNBS3NsWDNDOXpT
+    Q1Y5bWk2QnBmMlpnWmtCSURua19SbEEiCn0K

@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hbp-deployment
+  labels:
+    app: hbp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: hbp
+  template:
+    metadata:
+      labels:
+        app: hbp
+    spec:
+      containers:
+        - name: hbp
+          image: simih/hbp:latest
+          volumeMounts:
+            - name: srt
+              mountPath: "/app/src/keys/"
+              readOnly: true
+          env:
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                   name: secret-hbp
+                   key: port
+            - name: HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: secret-hbp
+                  key: host
+            - name: DB_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: secret-hbp
+                  key: db_port
+            - name: DB_HOSTNAME
+              valueFrom:
+                  secretKeyRef:
+                    name: secret-hbp
+                    key: db_host
+            - name: DB_PASSWORD
+              valueFrom:
+                  secretKeyRef:
+                    name: secret-hbp
+                    key: db_password
+          ports:
+          - containerPort: 3000
+      volumes:
+        - name: srt
+          secret:
+            secretName: keys-hbp
